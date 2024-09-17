@@ -1,0 +1,26 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+
+.App {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+input, select, textarea, button {
+  padding: 5px;
+}
+
+.dag-visualization ul {
+  list-style-type: none;
+  padding: 0;
+}
