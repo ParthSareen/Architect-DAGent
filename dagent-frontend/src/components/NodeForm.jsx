@@ -23,6 +23,7 @@ function NodeForm({ addNode }) {
 
   return (
     <form onSubmit={handleSubmit}>
+      <h2>Add Node</h2>
       <select value={nodeType} onChange={(e) => setNodeType(e.target.value)}>
         <option value="function">Function Node</option>
         <option value="decision">Decision Node</option>
@@ -32,20 +33,23 @@ function NodeForm({ addNode }) {
         placeholder="Node Name"
         value={nodeName}
         onChange={(e) => setNodeName(e.target.value)}
+        required
       />
       {nodeType === 'function' && (
         <textarea
-          placeholder="Function Code"
+          placeholder="Function Code (e.g., def func_name(arg1, arg2): return arg1 + arg2)"
           value={functionCode}
           onChange={(e) => setFunctionCode(e.target.value)}
+          required
         />
       )}
       {nodeType === 'decision' && (
         <input
           type="text"
-          placeholder="Model (e.g., 'groq/llama3-70b-8192')"
+          placeholder="Model (e.g., 'gpt-4-0125-preview')"
           value={model}
           onChange={(e) => setModel(e.target.value)}
+          required
         />
       )}
       <button type="submit">Add Node</button>
