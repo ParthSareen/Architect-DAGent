@@ -3,7 +3,9 @@ import React, { useState } from 'react';
 function NodeForm({ addNode }) {
   const [nodeType, setNodeType] = useState('function');
   const [nodeName, setNodeName] = useState('');
-  const [functionCode, setFunctionCode] = useState('');
+  const [description, setDescription] = useState('');
+  const [params, setParams] = useState('');
+  const [output, setOutput] = useState('');
   const [model, setModel] = useState('');
 
   const handleSubmit = (e) => {
@@ -11,13 +13,17 @@ function NodeForm({ addNode }) {
     const newNode = {
       type: nodeType,
       name: nodeName,
-      functionCode: nodeType === 'function' ? functionCode : null,
+      description: nodeType === 'function' ? description : null,
+      params: nodeType === 'function' ? params.split(',').map(p => p.trim()) : null,
+      output: nodeType === 'function' ? output : null,
       model: nodeType === 'decision' ? model : null,
     };
     addNode(newNode);
     // Reset form
     setNodeName('');
-    setFunctionCode('');
+    setDescription('');
+    setParams('');
+    setOutput('');
     setModel('');
   };
 
@@ -36,12 +42,28 @@ function NodeForm({ addNode }) {
         required
       />
       {nodeType === 'function' && (
-        <textarea
-          placeholder="Function Code (e.g., def func_name(arg1, arg2): return arg1 + arg2)"
-          value={functionCode}
-          onChange={(e) => setFunctionCode(e.target.value)}
-          required
-        />
+        <>
+          <textarea
+            placeholder="Function Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
+          <input
+            type="text"
+            placeholder="Parameters (comma-separated)"
+            value={params}
+            onChange={(e) => setParams(e.target.value)}
+            required
+          />
+          <input
+            type="text"
+            placeholder="Output"
+            value={output}
+            onChange={(e) => setOutput(e.target.value)}
+            required
+          />
+        </>
       )}
       {nodeType === 'decision' && (
         <input

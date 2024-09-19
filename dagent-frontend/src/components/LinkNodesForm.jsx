@@ -29,12 +29,12 @@ function LinkNodesForm({ linkNodes, nodes }) {
       <select value={fromNode} onChange={(e) => setFromNode(e.target.value)} required>
         <option value="">Select 'from' node</option>
         {nodes.map(node => (
-          <option key={node.name} value={node.name}>{node.name}</option>
+          <option key={node.id} value={node.id}>{node.id}</option>
         ))}
       </select>
       <select multiple value={toNodes} onChange={handleToNodesChange} required>
         {nodes.map(node => (
-          <option key={node.name} value={node.name}>{node.name}</option>
+          <option key={node.id} value={node.id}>{node.id}</option>
         ))}
       </select>
       <button type="submit">Link Nodes</button>

@@ -1,13 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { applyNodeChanges, applyEdgeChanges } from 'reactflow';
 import NodeForm from './components/NodeForm';
 import DAGVisualization from './components/DAGVisualization';
 import LinkNodesForm from './components/LinkNodesForm';
 
 function App() {
   const [nodes, setNodes] = useState([]);
-  const [connections, setConnections] = useState([]);
+  const [edges, setEdges] = useState([]);
   const [entryNode, setEntryNode] = useState(null);
   const [executionResult, setExecutionResult] = useState(null);
+
+  useEffect(() => {
+    const loadDAG = async () => {
+      const response = await fetch('http://127.0.0.1:5000/get_dag');
+      if (response.ok) {
+        const data = await response.json();
+        setNodes(Object.entries(data.nodes).map(([id, node]) => ({
+          id,
+          type: 'default',
+          data: { label: `${node.type === 'function' ? '🔷' : '🔶'} ${id}` },
+          position: { x: Math.random() * 500, y: Math.random() * 500 },
+        })));
+        setEdges(Object.entries(data.connections).flatMap(([from, tos]) => 
+          tos.map(to => ({ id: `e${from}-${to}`, source: from, target: to, animated: true }))
+        ));
+        setEntryNode(data.entry_node);
+      }
+    };
+    loadDAG();
+  }, []);
 
   const addNode = async (node) => {
     const endpoint = node.type === 'function' ? '/add_function_node' : '/add_decision_node';
@@ -17,7 +38,13 @@ function App() {
       body: JSON.stringify(node),
     });
     if (response.ok) {
-      setNodes([...nodes, node]);
+      const newNode = {
+        id: node.name,
+        type: 'default',
+        data: { label: `${node.type === 'function' ? '🔷' : '🔶'} ${node.name}` },
+        position: { x: Math.random() * 500, y: Math.random() * 500 },
+      };
+      setNodes((nds) => [...nds, newNode]);
     } else {
       console.error('Failed to add node');
     }
@@ -30,12 +57,12 @@ function App() {
       body: JSON.stringify({ from, to }),
     });
     if (response.ok) {
-      setConnections([...connections, { from, to }]);
+      const newEdge = { id: `e${from}-${to}`, source: from, target: to, animated: true };
+      setEdges((eds) => [...eds, newEdge]);
     } else {
       console.error('Failed to link nodes');
     }
   };
-
   const setEntryNodeHandler = async (nodeName) => {
     const response = await fetch('http://127.0.0.1:5000/set_entry_node', {
       method: 'POST',
@@ -44,10 +71,27 @@ function App() {
     });
     if (response.ok) {
       setEntryNode(nodeName);
+      setNodes((nds) => 
+        nds.map((node) => 
+          node.id === nodeName 
+            ? { ...node, style: { ...node.style, border: '2px solid red' } }
+            : node.id === entryNode
+              ? { ...node, style: { ...node.style, border: 'none' } }
+              : node
+        )
+      );
     } else {
       console.error('Failed to set entry node');
     }
   };
+
+  const onNodesChange = useCallback((changes) => {
+    setNodes((nds) => applyNodeChanges(changes, nds));
+  }, []);
+
+  const onEdgesChange = useCallback((changes) => {
+    setEdges((eds) => applyEdgeChanges(changes, eds));
+  }, []);
 
   const compileDAG = async () => {
     const response = await fetch('http://127.0.0.1:5000/compile', { method: 'POST' });
@@ -72,18 +116,24 @@ function App() {
     }
   };
 
+
   return (
     <div className="App">
-    <h1>DAGent Workflow Builder</h1>
-    <NodeForm addNode={addNode} />
-    <LinkNodesForm linkNodes={linkNodes} nodes={nodes} />
-    <DAGVisualization nodes={nodes} connections={connections} entryNode={entryNode} />
+      <h1>DAGent Workflow Builder</h1>
+      <NodeForm addNode={addNode} />
+      <LinkNodesForm linkNodes={linkNodes} nodes={nodes} />
+      <DAGVisualization 
+        nodes={nodes} 
+        edges={edges} 
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+      />
       <div>
         <h2>Set Entry Node</h2>
         <select onChange={(e) => setEntryNodeHandler(e.target.value)}>
           <option value="">Select entry node</option>
           {nodes.map(node => (
-            <option key={node.name} value={node.name}>{node.name}</option>
+            <option key={node.id} value={node.id}>{node.id}</option>
           ))}
         </select>
       </div>

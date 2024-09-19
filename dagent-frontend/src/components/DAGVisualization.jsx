@@ -6,28 +6,15 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
-function DAGVisualization({ nodes, connections, entryNode }) {
-  const elements = [
-    ...nodes.map((node, index) => ({
-      id: node.name,
-      type: 'default',
-      data: { 
-        label: `${node.type === 'function' ? '🔷' : '🔶'} ${node.name}${node.name === entryNode ? ' (Entry)' : ''}` 
-      },
-      position: { x: 100 * (index + 1), y: 100 * (index + 1) },
-      style: node.name === entryNode ? { border: '2px solid red' } : {}
-    })),
-    ...connections.map((connection, index) => ({
-      id: `e${index}`,
-      source: connection.from,
-      target: connection.to,
-      animated: true,
-    })),
-  ];
-
+function DAGVisualization({ nodes, edges, onNodesChange, onEdgesChange }) {
   return (
     <div style={{ height: '400px', width: '100%' }}>
-      <ReactFlow elements={elements}>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+      >
         <Background />
         <Controls />
         <MiniMap />
