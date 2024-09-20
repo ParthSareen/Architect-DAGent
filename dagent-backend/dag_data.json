@@ -1,47 +1,5 @@
 {
-  "nodes": {
-    "random_dec": {
-      "type": "decision",
-      "model": "gpt-4-0125-preview"
-    },
-    "main_node": {
-      "type": "function",
-      "description": "a function to just return the inputted param user_input",
-      "params": [
-        "user_input"
-      ],
-      "output": "str",
-      "function_code": "def return_input(user_input):\n    return str(user_input)"
-    },
-    "add_two_nums": {
-      "type": "function",
-      "description": "function to add to floats together",
-      "params": [
-        "a",
-        "b"
-      ],
-      "output": "float value",
-      "function_code": "def add_floats(a: float, b: float) -> float:\n    return a + b"
-    },
-    "multiply_two_nums": {
-      "type": "function",
-      "description": "funciton to multiply two floats",
-      "params": [
-        "a",
-        "b"
-      ],
-      "output": "float",
-      "function_code": "def multiply_floats(a: float, b: float) -> float:\n    return a * b"
-    }
-  },
-  "connections": {
-    "main_node": [
-      "random_dec"
-    ],
-    "random_dec": [
-      "add_two_nums",
-      "multiply_two_nums"
-    ]
-  },
-  "entry_node": "main_node"
+  "nodes": {},
+  "connections": {},
+  "entry_node": null
 }
