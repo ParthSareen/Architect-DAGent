@@ -15,16 +15,23 @@ function App() {
       const response = await fetch('http://127.0.0.1:5000/get_dag');
       if (response.ok) {
         const data = await response.json();
-        setNodes(Object.entries(data.nodes).map(([id, node]) => ({
+        const newNodes = Object.entries(data.nodes).map(([id, node]) => ({
           id,
           type: 'default',
-          data: { label: `${node.type === 'function' ? '🔷' : '🔶'} ${id}` },
-          position: { x: Math.random() * 500, y: Math.random() * 500 },
-        })));
-        setEdges(Object.entries(data.connections).flatMap(([from, tos]) => 
+          data: { 
+            label: `${node.type === 'function' ? '🔷' : '🔶'} ${node.function_name || id}`,
+            nodeData: node
+          },
+          position: { x: 0, y: 0 }, // Initial position
+        }));
+        setNodes(newNodes);
+        const newEdges = Object.entries(data.connections).flatMap(([from, tos]) => 
           tos.map(to => ({ id: `e${from}-${to}`, source: from, target: to, animated: true }))
-        ));
+        );
+        setEdges(newEdges);
         setEntryNode(data.entry_node);
+        console.log('Loaded nodes:', newNodes);
+        console.log('Loaded edges:', newEdges);
       }
     };
     loadDAG();
@@ -116,17 +123,43 @@ function App() {
     }
   };
 
+  const clearDAG = async () => {
+    const response = await fetch('http://127.0.0.1:5000/clear_dag', { method: 'POST' });
+    if (response.ok) {
+      setNodes([]);
+      setEdges([]);
+      setEntryNode(null);
+    } else {
+      console.error('Failed to clear DAG');
+    }
+  };
+
+  const deleteNode = async (nodeId) => {
+    const response = await fetch(`http://127.0.0.1:5000/delete_node/${nodeId}`, { method: 'DELETE' });
+    if (response.ok) {
+      setNodes((nds) => nds.filter((node) => node.id !== nodeId));
+      setEdges((eds) => eds.filter((edge) => edge.source !== nodeId && edge.target !== nodeId));
+      if (entryNode === nodeId) {
+        setEntryNode(null);
+      }
+    } else {
+      console.error('Failed to delete node');
+    }
+  };
+
 
   return (
     <div className="App">
       <h1>DAGent Workflow Builder</h1>
       <NodeForm addNode={addNode} />
       <LinkNodesForm linkNodes={linkNodes} nodes={nodes} />
+      <button onClick={clearDAG}>Clear DAG</button>
       <DAGVisualization 
-        nodes={nodes} 
-        edges={edges} 
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
+        initialNodes={nodes} 
+        initialEdges={edges}
+        onNodesChangeParent={onNodesChange}
+        onEdgesChangeParent={onEdgesChange}
+        onDeleteNode={deleteNode}
       />
       <div>
         <h2>Set Entry Node</h2>

@@ -36,7 +36,7 @@ function NodeForm({ addNode }) {
       </select>
       <input
         type="text"
-        placeholder="Node Name"
+        placeholder="Function Name"
         value={nodeName}
         onChange={(e) => setNodeName(e.target.value)}
         required
