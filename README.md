@@ -1,4 +1,4 @@
-# Architect Dagent
+# Architect DAGent
 
 A backend and UI to make a low/no-code workflow builder 
 
