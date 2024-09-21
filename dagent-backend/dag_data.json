@@ -1,5 +1,52 @@
 {
-  "nodes": {},
-  "connections": {},
-  "entry_node": null
+  "nodes": {
+    "entry_node": {
+      "type": "function",
+      "function_name": "entry",
+      "description": "simple function to return param user_input",
+      "params": [
+        "user_input"
+      ],
+      "output": "str",
+      "function_code": "def entry(user_input: str) -> str:\n    return user_input"
+    },
+    "first_decision_node": {
+      "type": "decision",
+      "node_name": "first_decision_node",
+      "model": "gpt-4-0125-preview"
+    },
+    "add_3_numbers_node": {
+      "type": "function",
+      "function_name": "add_3_numbers",
+      "description": "add 3 floats a, b, c",
+      "params": [
+        "a",
+        "b",
+        "c"
+      ],
+      "output": "float",
+      "function_code": "def add_3_numbers(a: float, b: float, c: float) -> float:\n    return a + b + c"
+    },
+    "multiply_2_numbers_node": {
+      "type": "function",
+      "function_name": "multiply_2_numbers",
+      "description": "a function to multiply 2 numbers a, b",
+      "params": [
+        "a",
+        "b"
+      ],
+      "output": "float",
+      "function_code": "def multiply_2_numbers(a, b):\n    return float(a * b)"
+    }
+  },
+  "connections": {
+    "entry_node": [
+      "first_decision_node"
+    ],
+    "first_decision_node": [
+      "add_3_numbers_node",
+      "multiply_2_numbers_node"
+    ]
+  },
+  "entry_node": "entry_node"
 }

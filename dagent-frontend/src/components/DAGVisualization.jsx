@@ -88,7 +88,7 @@ function DAGVisualization({ initialNodes, initialEdges, onNodesChangeParent, onE
     onEdgesChangeParent(changes);
   };
   const nodeTypes = {
-    default: (props) => <CustomNode {...props} onDeleteNode={onDeleteNode} />,
+    default: (props) => <CustomNode {...props} ondeletenode={onDeleteNode} />,
   };
 
   return (

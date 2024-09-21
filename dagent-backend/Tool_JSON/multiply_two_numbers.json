@@ -1,0 +1,1 @@
+{"type": "function", "function": {"name": "multiply_two_numbers", "description": "Multiplies two given numbers", "parameters": {"type": "object", "properties": {"a": {"type": "number", "description": "The first number to be multiplied"}, "b": {"type": "number", "description": "The second number to be multiplied"}}, "required": ["a", "b"]}}}

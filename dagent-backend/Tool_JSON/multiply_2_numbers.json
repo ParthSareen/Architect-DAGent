@@ -1,0 +1,1 @@
+{"type": "function", "function": {"name": "multiply_2_numbers", "description": "Multiply two numbers and return the result as a float.", "parameters": {"type": "object", "properties": {"a": {"type": "number", "description": "The first number to be multiplied."}, "b": {"type": "number", "description": "The second number to be multiplied."}}, "required": ["a", "b"]}}}
